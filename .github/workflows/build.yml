@@ -22,17 +22,14 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
-
       - name: Generate test structures
         run: python3 tools/generate_test_structures.py
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: gradle build
 
       - name: Run GameTest Tests
-        run: ./gradlew runGameTest
+        run: gradle runGameTest
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
