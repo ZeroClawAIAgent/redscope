@@ -1,87 +1,93 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabricmc.net/' }
+    }
+}
+
 plugins {
-	id 'java'
-	id 'net.fabricmc.fabric-loom' version "${loom_version}"
-	id 'maven-publish'
+    id 'java'
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    id 'maven-publish'
 }
 
 version = project.mod_version
 group = project.maven_group
 
 base {
-	archivesName = 'redscope'
+    archivesName = 'redscope'
 }
 
 repositories {
-	maven { url 'https://maven.fabricmc.net/' }
-	maven { url 'https://maven.terraformersmc.com/' }
-	maven { url 'https://maven.shedaniel.me/' }
-	mavenCentral()
+    maven { url 'https://maven.fabricmc.net/' }
+    maven { url 'https://maven.terraformersmc.com/' }
+    maven { url 'https://maven.shedaniel.me/' }
+    mavenCentral()
 }
 
 dependencies {
-	// Minecraft 26.1.2 — unobfuscated, NO mappings needed
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    // Minecraft 26.1.2 — unobfuscated, NO mappings needed
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
 
-	// Fabric Loader
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    // Fabric Loader
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Fabric API (for Minecraft 26.1.2)
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    // Fabric API (for Minecraft 26.1.2)
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 }
 
 processResources {
-	inputs.property "version", version
-	filesMatching("fabric.mod.json") {
-		expand "version": version
-	}
+    inputs.property "version", version
+    filesMatching("fabric.mod.json") {
+        expand "version": version
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 25
+    it.options.release = 25
 }
 
 java {
-	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 loom {
-	splitEnvironmentSourceSets()
+    splitEnvironmentSourceSets()
 
-	mods {
-		"${mod_id}" {
-			sourceSet sourceSets.main
-			sourceSet sourceSets.client
-		}
-	}
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
 
-	runs {
-		gameTest {
-			inherit server
-			name "Game Test"
-			vmArg "-Dfabric-api.game-test"
-			vmArg "-Dfabric-api.game-test-report-file=${project.buildDir}/junit.xml"
-			runDir "build/gametest"
-		}
-	}
+    runs {
+        gameTest {
+            inherit server
+            name "Game Test"
+            vmArg "-Dfabric-api.game-test"
+            vmArg "-Dfabric-api.game-test-report-file=${project.buildDir}/junit.xml"
+            runDir "build/gametest"
+        }
+    }
 }
 
 jar {
-	from("LICENSE") {
-		rename { String fileName -> "LICENSE_redscope" }
-	}
+    from("LICENSE") {
+        rename { String fileName -> "LICENSE_redscope" }
+    }
 }
 
 // configure the maven publication
 publishing {
-	publications {
-		create("mavenJava", MavenPublication) {
-			from components.java
-		}
-	}
+    publications {
+        create("mavenJava", MavenPublication) {
+            from components.java
+        }
+    }
 
-	repositories {
-		// Add repositories to publish to here.
-	}
+    repositories {
+        // Add repositories to publish to here.
+    }
 }
