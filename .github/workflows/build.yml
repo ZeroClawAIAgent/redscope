@@ -22,7 +22,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: "8.10"
+          gradle-version: "8.14"
 
       - name: Generate test structures
         run: python3 tools/generate_test_structures.py
