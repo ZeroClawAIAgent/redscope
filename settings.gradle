@@ -1,1 +1,13 @@
+pluginManagement {
+    repositories {
+        maven { url 'https://maven.fabricmc.net/' }
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchain.requirement-resolver' version '1.0'
+}
+
 rootProject.name = 'redscope'
