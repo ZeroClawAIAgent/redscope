@@ -27,6 +27,12 @@ dependencies {
 
     // Fabric API (for Minecraft 26.1.2)
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    // Cloth Config (for mod menu integration)
+    modImplementation "me.shedaniel.cloth:cloth-config-fabric:17.1.118"
+
+    // ModMenu
+    modImplementation "com.terraformersmc:modmenu:15.0.3"
 }
 
 processResources {
@@ -53,16 +59,6 @@ loom {
         "${mod_id}" {
             sourceSet sourceSets.main
             sourceSet sourceSets.client
-        }
-    }
-
-    runs {
-        gameTest {
-            inherit server
-            name "Game Test"
-            vmArg "-Dfabric-api.game-test"
-            vmArg "-Dfabric-api.game-test-report-file=${project.buildDir}/junit.xml"
-            runDir "build/gametest"
         }
     }
 }
