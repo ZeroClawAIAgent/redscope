@@ -19,19 +19,21 @@ repositories {
 }
 
 dependencies {
-	// Minecraft 26.1.2 with official Mojang mappings (unobfuscated)
+	// Minecraft 26.1.2 — unobfuscated, official Mojang mappings
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
-	
+
 	// Fabric Loader
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	
-	// Fabric API
+
+	// Fabric API (for Minecraft 26.1.2)
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	
-	// Cloth Config & ModMenu (optional client-side)
-	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modImplementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
+
+	// ModMenu integration (v18 for 26.1)
+	implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+	// Cloth Config (client-side config library)
+	implementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
 }
 
 processResources {
@@ -52,8 +54,6 @@ java {
 }
 
 loom {
-	splitEnvironmentSourceSets()
-	
 	runs {
 		gameTest {
 			inherit server
