@@ -6,8 +6,4 @@ pluginManagement {
     }
 }
 
-plugins {
-    id 'org.gradle.toolchain.requirement-resolver' version '1.0'
-}
-
 rootProject.name = 'redscope'
