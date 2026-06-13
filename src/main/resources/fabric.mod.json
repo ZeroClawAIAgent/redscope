@@ -3,13 +3,13 @@
   "id": "redscope",
   "version": "${version}",
   "name": "RedScope",
-  "description": "A small redstone debugger and visualizer for Minecraft.",
+  "description": "A small redstone debugger and visualizer for Minecraft 26.1.2",
   "authors": [
     "RedScope Team"
   ],
   "contact": {
-    "homepage": "https://github.com/yourusername/redscope",
-    "sources": "https://github.com/yourusername/redscope"
+    "homepage": "https://github.com/ZeroClawAIAgent/redscope",
+    "sources": "https://github.com/ZeroClawAIAgent/redscope"
   },
   "license": "MIT",
   "icon": "assets/redscope/icon.png",
@@ -20,10 +20,6 @@
     ],
     "client": [
       "com.redscope.RedScopeClientMod"
-    ],
-    "gametest": [
-      "com.redscope.gametest.RedScopeGameTests",
-      "com.redscope.gametest.ComplexCircuitTests"
     ]
   },
   "depends": {
@@ -33,10 +29,6 @@
     "fabric-api": ">=0.151.0+26.1.2"
   },
   "suggests": {
-    "modmenu": "*",
-    "cloth-config": ">=17.0.143"
-  },
-  "mixins": [
-    "redscope.mixins.json"
-  ]
+    "modmenu": "*"
+  }
 }
