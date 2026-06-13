@@ -13,8 +13,6 @@ base {
 
 repositories {
     maven { url 'https://maven.fabricmc.net/' }
-    maven { url 'https://maven.terraformersmc.com/' }
-    maven { url 'https://maven.shedaniel.me/' }
     mavenCentral()
 }
 
@@ -27,9 +25,6 @@ dependencies {
 
     // Fabric API (for Minecraft 26.1.2)
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-
-    // ModMenu (suggested dependency)
-    implementation "com.terraformersmc:modmenu:15.0.3"
 }
 
 processResources {
