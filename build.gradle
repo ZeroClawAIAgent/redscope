@@ -28,11 +28,8 @@ dependencies {
     // Fabric API (for Minecraft 26.1.2)
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    // Cloth Config (for mod menu integration)
-    modImplementation "me.shedaniel.cloth:cloth-config-fabric:17.1.118"
-
-    // ModMenu
-    modImplementation "com.terraformersmc:modmenu:15.0.3"
+    // ModMenu (suggested dependency)
+    implementation "com.terraformersmc:modmenu:15.0.3"
 }
 
 processResources {
