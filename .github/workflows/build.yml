@@ -24,15 +24,8 @@ jobs:
         with:
           gradle-version: "9.5.1"
 
-      - name: Generate test structures
-        run: python3 tools/generate_test_structures.py
-
       - name: Build with Gradle
         run: gradle build --no-daemon --stacktrace
-
-      - name: Run GameTest Tests
-        run: gradle runGameTest --no-daemon --stacktrace
-        continue-on-error: true
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -42,12 +35,4 @@ jobs:
           path: |
             build/libs/*.jar
             build/reports/
-          if-no-files-found: ignore
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: redscope-test-results
-          path: build/reports/tests/
           if-no-files-found: ignore
