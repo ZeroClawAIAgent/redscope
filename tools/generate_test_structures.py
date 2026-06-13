@@ -22,6 +22,12 @@ TAG_COMPOUND = 10
 TAG_INT_ARRAY = 11
 TAG_LONG_ARRAY = 12
 
+@dataclass
+class BlockEntry:
+    name: str
+    state: Dict[str, str] = field(default_factory=dict)
+    pos: List[int] = field(default_factory=lambda: [0, 0, 0])
+
 class NbtWriter:
     def __init__(self):
         self._buf = bytearray()
@@ -73,10 +79,6 @@ class NbtWriter:
             return self._enc_compound(name, value)
         else:
             raise TypeError(f"Unsupported: {type(value)}")
-
-    def _enc_name(self, name):
-        b = name.encode('utf-8')
-        return struct.pack(">h", len(b)) + b
 
     def _enc_compound(self, name, data):
         buf = bytearray()
@@ -130,8 +132,67 @@ class NbtWriter:
     def _enc_int(self, name, v):
         return struct.pack(">b", TAG_INT) + self._enc_name(name) + struct.pack(">i", v)
 
-OUT_DIR = Path(__file__).resolve().parent
-OUT_DIR.mkdir(parents=True, exist_ok=True)
+    def _enc_byte(self, name, v):
+        return struct.pack(">b", TAG_BYTE) + self._enc_name(name) + struct.pack(">b", v)
+
+    def finalize(self, root_name):
+        # Write the root compound tag
+        root_tag = TAG_COMPOUND
+        # Get the root data from _root
+        data = self._root
+        buf = bytearray()
+        for k, v in data.items():
+            buf += self._enc_value(k, v)
+        buf += struct.pack(">b", TAG_END)
+        # Write root tag: type + name + payload
+        result = struct.pack(">b", root_tag)
+        result += self._enc_name(root_name)
+        result += struct.pack(">i", len(buf))
+        result += bytes(buf)
+        return result
+
+def encode_nbt(data, root_name):
+    """Encode NBT data to bytes."""
+    w = NbtWriter()
+    w._root = data
+    
+    # Write root compound tag
+    root_tag = TAG_COMPOUND
+    buf = bytearray()
+    for k, v in data.items():
+        buf += w._enc_value(k, v)
+    buf += struct.pack(">b", TAG_END)
+    
+    result = struct.pack(">b", root_tag)
+    result += w._enc_name(root_name)
+    result += struct.pack(">i", len(buf))
+    result += bytes(buf)
+    return result
+
+def write_nbt(name, blocks):
+    OUT_DIR = Path(__file__).resolve().parent
+    data = make_structure(blocks, size=[8, 4, 8], author="RedScope")
+    raw = encode_nbt(data, name)
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    (OUT_DIR / f"{name}.nbt").write_bytes(raw)
+    print(f"Wrote {OUT_DIR / name}.nbt ({len(raw)} bytes)")
+
+
+def make_structure(blocks, size, author="RedScope"):
+    return {
+        "size": size,
+        "entities": [],
+        "blocks": [
+            {
+                "pos": b.pos,
+                "state": {
+                    "Name": b.name,
+                    "Properties": b.state if b.state else {}
+                },
+            }
+            for b in blocks
+        ],
+    }
 
 STRUCTURES = {
     "redstone_line_16": [BlockEntry("minecraft:redstone_wire")],
@@ -169,11 +230,6 @@ STRUCTURES = {
         BlockEntry("minecraft:repeater", {"facing": "north", "delay": "1", "locked": "false", "powered": "true"}),
         BlockEntry("minecraft:repeater", {"facing": "east", "delay": "1", "locked": "false", "powered": "false"}),
     ],
-    "redstone_multiplexer": [
-        BlockEntry("minecraft:repeater", {"facing": "north", "delay": "1", "locked": "false", "powered": "true"}),
-        BlockEntry("minecraft:repeater", {"facing": "east", "delay": "1", "locked": "false", "powered": "false"}),
-        BlockEntry("minecraft:redstone_wire"),
-    ],
     "vertical_signal_chain": [
         BlockEntry("minecraft:redstone_wire"),
         BlockEntry("minecraft:redstone_wire"),
@@ -185,36 +241,6 @@ STRUCTURES = {
         BlockEntry("minecraft:redstone_torch", {"facing": "west"}),
     ],
 }
-
-OUT_DIR = Path(__file__).resolve().parent
-
-def write_nbt(name, blocks):
-    w = NbtWriter()
-    data = make_structure(blocks, size=[8, 4, 8], author="RedScope")
-    w._root = data
-    raw = w.finalize(root_name)
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    (OUT_DIR / f"{name}.nbt").write_bytes(raw)
-    print(f"Wrote {OUT_DIR / name}.nbt ({len(raw)} bytes)")
-
-
-def make_structure(blocks, size, author="RedScope"):
-    return {
-        "size": size,
-        "entities": [],
-        "blocks": [
-            {
-                "pos": b.pos,
-                "state": {
-                    "Name": b.name,
-                    "Properties": b.state if b.state else {}
-                },
-            }
-            for b in blocks
-        ],
-    }
-
-STRUCTURES = { ... same as before ... }
 
 for name, data in STRUCTURES.items():
     write_nbt(name, data)
